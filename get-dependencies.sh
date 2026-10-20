@@ -22,12 +22,9 @@ pacman -Syu --noconfirm \
 	ttf-dejavu \
 	ttf-liberation
 
-echo "Installing debloated packages..."
-echo "---------------------------------------------------------------"
-get-debloated-pkgs --add-common --prefer-nano
-
 echo "Building lumina..."
 echo "---------------------------------------------------------------"
+rm -rf ./lumina
 git clone https://github.com/lumina-desktop/lumina.git ./lumina
 cd ./lumina
 git checkout v1.6.2
@@ -39,3 +36,13 @@ patch -p1 < ../lumina-portability.patch
 qmake-qt5 PREFIX=/usr src-qt5/src-qt5.pro
 make -j"$(nproc)"
 make install
+cd ..
+
+test -x /usr/bin/start-lumina-desktop
+test -x /usr/bin/lumina-desktop
+
+# after pacman and after the build, so a debloated mesa can never
+# interfere with the Qt5 toolchain that just compiled Lumina
+echo "Installing debloated packages..."
+echo "---------------------------------------------------------------"
+get-debloated-pkgs --add-mesa --prefer-nano icu-mini
