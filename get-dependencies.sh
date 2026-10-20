@@ -28,6 +28,7 @@ pacman -Syu --noconfirm \
 	fluxbox \
 	xterm \
 	xdg-utils \
+	xdg-user-dirs \
 	ttf-dejavu \
 	ttf-liberation
 
