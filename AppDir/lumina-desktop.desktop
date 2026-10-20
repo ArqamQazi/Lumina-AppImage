@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Lumina Desktop
+GenericName=Desktop Environment
+Comment=A lightweight, plugin based desktop environment
+Exec=start-lumina-desktop
+TryExec=start-lumina-desktop
+Icon=Lumina-DE
+Terminal=false
+Categories=System;DesktopSettings;
+Keywords=desktop;session;lumina;
+StartupWMClass=Lumina Desktop Environment

@@ -1,0 +1,13 @@
+dist/
+AppDir/lib/
+AppDir/shared/
+AppDir/AppRun
+AppDir/AppRun.lib
+AppDir/AppRun.sh
+AppDir/sharun
+AppDir/.DirIcon
+AppDir/.env
+AppDir/bin/01-path-mapping-hardcoded.hook
+AppDir/bin/qt.conf
+quick-sharun
+lumina/

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Lumina finds its data files through LOS::LuminaShare(), which is a
+# compile time path. Point it at the AppDir instead so the desktop does
+# not look for /usr/share/lumina-desktop on the host.
+export LUMINA_SHARE_DIR="$APPDIR/share/lumina-desktop"

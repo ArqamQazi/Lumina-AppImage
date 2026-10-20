@@ -1,0 +1,58 @@
+diff --git a/src-qt5/core/libLumina/LuminaOS-Linux.cpp b/src-qt5/core/libLumina/LuminaOS-Linux.cpp
+index 678dee9..9d21f2f 100644
+--- a/src-qt5/core/libLumina/LuminaOS-Linux.cpp
++++ b/src-qt5/core/libLumina/LuminaOS-Linux.cpp
+@@ -17,7 +17,14 @@ QString LOS::OSName(){ return "Linux"; }
+ 
+ //OS-specific prefix(s)
+ // NOTE: PREFIX, L_ETCDIR, L_SHAREDIR are defined in the OS-detect.pri project file and passed in
+-QString LOS::LuminaShare(){ return (L_SHAREDIR+"/lumina-desktop/"); } //Install dir for Lumina share files
++//Install dir for Lumina share files
++//Honour a relocated install (AppImage, custom prefix) when APPDIR is set,
++//this is what makes the desktop work outside of /usr
++QString LOS::LuminaShare(){
++  QString share = QString(getenv("LUMINA_SHARE_DIR")).simplified();
++  if(!share.isEmpty()){ return share.endsWith("/") ? share : share+"/"; }
++  return (L_SHAREDIR+"/lumina-desktop/");
++}
+ QString LOS::AppPrefix(){ return "/usr/"; } //Prefix for applications
+ QString LOS::SysPrefix(){ return "/usr/"; } //Prefix for system
+ 
+diff --git a/src-qt5/core/libLumina/LuminaX11.cpp b/src-qt5/core/libLumina/LuminaX11.cpp
+index 96f7c17..674a3ef 100644
+--- a/src-qt5/core/libLumina/LuminaX11.cpp
++++ b/src-qt5/core/libLumina/LuminaX11.cpp
+@@ -187,16 +187,31 @@ void LXCB::SetCurrentWorkspace(int number){
+ }
+ 
+ //Display Power Management System (DPMS)
++// === HasDPMS() ===
++static bool HasDPMS(){
++  //The DPMS extension is optional, and sending a DPMS request to a server
++  //that lacks it is a BadRequest, which xcb turns into a dead connection
++  static int has = -1;
++  if(has < 0){
++    xcb_connection_t *con = QX11Info::connection();
++    xcb_query_extension_cookie_t cookie = xcb_query_extension(con, 4, "DPMS");
++    xcb_query_extension_reply_t *reply = xcb_query_extension_reply(con, cookie, NULL);
++    has = (reply!=0 && reply->present) ? 1 : 0;
++    free(reply);
++  }
++  return (has==1);
++}
++
+ // ===== enableDPMS() =====
+ void LXCB::enableDPMS(){
+   XSetScreenSaver( QX11Info::display(), 600, 600, PreferBlanking, DontAllowExposures); //10 minutes - older pre-dpms protocol
+-  xcb_dpms_enable(QX11Info::connection());
++  if(HasDPMS()){ xcb_dpms_enable(QX11Info::connection()); }
+ }
+ 
+ // ===== disableDPMS() =====
+ void LXCB::disableDPMS(){
+   XSetScreenSaver( QX11Info::display(), 0, 0, PreferBlanking, DontAllowExposures); //older pre-dpms protocol
+-  xcb_dpms_disable(QX11Info::connection());
++  if(HasDPMS()){ xcb_dpms_disable(QX11Info::connection()); }
+ }
+ 
+ // === WindowClass() ===
