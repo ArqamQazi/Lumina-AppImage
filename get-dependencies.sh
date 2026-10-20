@@ -16,6 +16,15 @@ pacman -Syu --noconfirm \
 	qt5-tools \
 	qt5-translations \
 	qt5-x11extras \
+	libxdamage \
+	libxcursor \
+	libx11 \
+	libxcb \
+	xcb-util \
+	xcb-util-image \
+	xcb-util-keysyms \
+	xcb-util-renderutil \
+	xcb-util-wm \
 	fluxbox \
 	xterm \
 	xdg-utils \
